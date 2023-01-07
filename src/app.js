@@ -65,13 +65,13 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
-  const { USERNAME, page } = req.query;
+  const { page } = req.query;
+  const arrayTweets = [...tweets];
   if (page && page !== "") {
     const numPage = Number(page);
     if (!numPage || numPage <= 0)
       return res.status(400).send("Informe uma página válida!");
     if (numPage) {
-      const arrayTweets = [...tweets];
       const initialTweet = numPage * 10 - 10;
       const finalTweet = initialTweet + 10;
       const tweetPage = arrayTweets.reverse().slice(initialTweet, finalTweet);
@@ -82,16 +82,23 @@ app.get("/tweets", (req, res) => {
         return res.status(404).send("Informe uma página válida!");
       return res.send(tweetPage);
     }
-  } else if (!USERNAME && !page) {
-    const last10 = tweets.reverse().slice(0, 10);
+  } else {
+    const last10 = arrayTweets.reverse().slice(0, 10);
     last10.map((l) => {
       l.avatar = users.find((user) => user.username === l.username).avatar;
     });
-    return res.status(200).send(last10);
-  } else {
-    const userTweets = tweets.filter((t) => t.username === USERNAME);
-    res.status(200).send(userTweets);
+    res.status(200).send(last10);
   }
+});
+
+app.get("/tweets/:USERNAME", (req, res) => {
+  const userName = req.params.USERNAME;
+  const arrayTweets = [...tweets];
+  const userTweets = arrayTweets.filter((t) => t.username === userName);
+  userTweets.map((l) => {
+    l.avatar = users.find((user) => user.username === l.username).avatar;
+  });
+  res.status(200).send(userTweets);
 });
 
 app.listen(5000);
