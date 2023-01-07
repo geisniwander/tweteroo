@@ -5,32 +5,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const tweets = [
-  { username: "teste", tweet: "1" },
-  { username: "gps", tweet: "2" },
-  { username: "gps", tweet: "3" },
-  { username: "gps", tweet: "4" },
-  { username: "gps", tweet: "5" },
-  { username: "teste", tweet: "6" },
-  { username: "gps", tweet: "7" },
-  { username: "gps", tweet: "8" },
-  { username: "teste", tweet: "9" },
-  { username: "gps", tweet: "10" },
-  { username: "gps", tweet: "11" },
-  { username: "gps", tweet: "12" },
-  { username: "teste", tweet: "13" },
-  { username: "teste", tweet: "14" },
-  { username: "gps", tweet: "15" },
-  { username: "gps", tweet: "16" },
-  { username: "gps", tweet: "17" },
-  { username: "gps", tweet: "18" },
-  { username: "gps", tweet: "19" },
-  { username: "gps", tweet: "20" },
-];
-const users = [
-  { username: "gps", avatar: "https://www.google.com" },
-  { username: "teste", avatar: "https://www.google.com" },
-];
+const tweets = [];
+const users = [];
 
 app.post("/sign-up", (req, res) => {
   const userObj = req.body;
@@ -52,11 +28,11 @@ app.post("/sign-up", (req, res) => {
 });
 
 app.post("/tweets", (req, res) => {
-  const tweetObj = req.body;
-  const username = tweetObj.username;
-  const tweet = tweetObj.tweet;
-  const isRegistered = users.find((user) => user.username === username);
-  if (username === "" || tweet === "")
+  const userName = req.headers.user;
+  const tweet = req.body.tweet;
+  const tweetObj = {userName,tweet};
+  const isRegistered = users.find((user) => user.username === userName);
+  if (userName === "" || tweet === "")
     return res.status(400).send("Todos os campos são obrigatórios!");
   if (!tweet || typeof tweet !== "string") return res.sendStatus(400);
   if (!isRegistered) return res.status(401).send("UNAUTHORIZED");
