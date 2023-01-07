@@ -41,15 +41,22 @@ app.post("/tweets", (req, res) => {
   if (!isRegistered) 
     return res.status(401).send("UNAUTHORIZED");
   tweets.push(tweetObj);
-  res.status(201).send(tweet);
+  res.status(201).send(tweetObj);
 });
 
 app.get("/tweets", (req, res) => {
-  const last10 = tweets.reverse().slice(0, 10);
-  last10.map((l) => {
-    l.avatar = users.find((user) => user.username === l.username).avatar;
-  });
-  res.send(last10);
+  const {USERNAME} = req.query;
+  if(!USERNAME){
+    const last10 = tweets.reverse().slice(0, 10);
+    last10.map((l) => {
+      l.avatar = users.find((user) => user.username === l.username).avatar;
+    });
+    res.send(last10);
+  }else{
+    const userTweets = tweets.filter(t => t.username===USERNAME);
+    res.send(userTweets)
+  }
+
 });
 
 app.listen(5000);
