@@ -9,30 +9,39 @@ const tweets = [];
 const users = [];
 
 app.post("/sign-up", (req, res) => {
-  const user = req.body;
-  if (user.username === "" || user.avatar === "")
-    return res.status(400).send("Todos os campos são obrigatórios!");
+  const userObj = req.body;
+  const username = userObj.username;
+  const avatar = userObj.avatar;
   let isURL = false;
+  if (username === "" || avatar === "")
+    return res.status(400).send("Todos os campos são obrigatórios!");
   try {
-    let url = new URL(user.avatar);
+    let url = new URL(avatar);
     isURL = true;
   } catch (err) {
     isURL = false;
   }
-  if (!user.username) return res.sendStatus(400);
-  if (!user.avatar || !isURL) return res.sendStatus(400);
-  users.push(user);
+  if (!username || typeof username !== "string") 
+    return res.sendStatus(400);
+  if (!avatar || !isURL) 
+    return res.sendStatus(400);
+  users.push(userObj);
   res.status(201).send("OK");
 });
 
 app.post("/tweets", (req, res) => {
-  const content = req.body;
-  const name = req.body.username;
-  const tweet = req.body.tweet;
-  const isRegistered = users.find((user) => user.username === name);
-  if (!isRegistered) return res.status(401).send("UNAUTHORIZED");
-  tweets.push(content);
-  res.send(tweet);
+  const tweetObj = req.body;
+  const username = tweetObj.username;
+  const tweet = tweetObj.tweet;
+  const isRegistered = users.find((user) => user.username === username);
+  if (username === "" || tweet === "")
+    return res.status(400).send("Todos os campos são obrigatórios!");
+  if (!tweet || typeof tweet !== "string") 
+    return res.sendStatus(400);
+  if (!isRegistered) 
+    return res.status(401).send("UNAUTHORIZED");
+  tweets.push(tweetObj);
+  res.status(201).send(tweet);
 });
 
 app.get("/tweets", (req, res) => {
