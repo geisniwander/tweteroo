@@ -28,11 +28,11 @@ app.post("/sign-up", (req, res) => {
 });
 
 app.post("/tweets", (req, res) => {
-  const userName = req.headers.user;
+  const username = req.headers.user;
   const tweet = req.body.tweet;
-  const tweetObj = {userName,tweet};
-  const isRegistered = users.find((user) => user.username === userName);
-  if (userName === "" || tweet === "")
+  const tweetObj = {username,tweet};
+  const isRegistered = users.find((user) => user.username === username);
+  if (username === "" || tweet === "")
     return res.status(400).send("Todos os campos são obrigatórios!");
   if (!tweet || typeof tweet !== "string") return res.sendStatus(400);
   if (!isRegistered) return res.status(401).send("UNAUTHORIZED");
