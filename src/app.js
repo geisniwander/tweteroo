@@ -10,8 +10,19 @@ const users = [];
 
 app.post("/sign-up", (req, res) => {
   const user = req.body;
+  if (user.username === "" || user.avatar === "")
+    return res.status(400).send("Todos os campos são obrigatórios!");
+  let isURL = false;
+  try {
+    let url = new URL(user.avatar);
+    isURL = true;
+  } catch (err) {
+    isURL = false;
+  }
+  if (!user.username) return res.sendStatus(400);
+  if (!user.avatar || !isURL) return res.sendStatus(400);
   users.push(user);
-  res.send("OK");
+  res.status(201).send("OK");
 });
 
 app.post("/tweets", (req, res) => {
