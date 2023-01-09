@@ -8,6 +8,14 @@ app.use(express.json());
 const tweets = [];
 const users = [];
 
+function addAvatar(array) {
+  array.forEach(
+    (l) =>
+      (l.avatar = users.find((user) => user.username === l.username).avatar)
+  );
+  return array;
+}
+
 app.post("/sign-up", (req, res) => {
   const userObj = req.body;
   const username = userObj.username;
@@ -49,29 +57,24 @@ app.get("/tweets", (req, res) => {
     if (numPage) {
       const initialTweet = numPage * 10 - 10;
       const finalTweet = initialTweet + 10;
-      const tweetPage = [...tweets].reverse().slice(initialTweet, finalTweet);
-      tweetPage.map((l) => {
-        l.avatar = users.find((user) => user.username === l.username).avatar;
-      });
+      const tweetPage = addAvatar(
+        [...tweets].reverse().slice(initialTweet, finalTweet)
+      );
       if (tweetPage.length === 0)
         return res.status(404).send("Informe uma página válida!");
       return res.send(tweetPage);
     }
   } else {
-    const last10 = [...tweets].reverse().slice(0, 10);
-    last10.map((l) => {
-      l.avatar = users.find((user) => user.username === l.username).avatar;
-    });
+    const last10 = addAvatar([...tweets].reverse().slice(0, 10));
     res.status(200).send(last10);
   }
 });
 
 app.get("/tweets/:USERNAME", (req, res) => {
   const paramName = req.params.USERNAME;
-  const userTweets = [...tweets].filter((t) => t.username === paramName);
-  userTweets.map((l) => {
-    l.avatar = users.find((user) => user.username === l.username).avatar;
-  });
+  const userTweets = addAvatar(
+    [...tweets].filter((t) => t.username === paramName)
+  );
   res.status(200).send(userTweets);
 });
 
