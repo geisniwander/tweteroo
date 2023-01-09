@@ -16,7 +16,7 @@ app.post("/sign-up", (req, res) => {
   if (username === "" || avatar === "")
     return res.status(400).send("Todos os campos são obrigatórios!");
   try {
-    let url = new URL(avatar);
+    new URL(avatar);
     isURL = true;
   } catch (err) {
     isURL = false;
@@ -30,7 +30,7 @@ app.post("/sign-up", (req, res) => {
 app.post("/tweets", (req, res) => {
   const username = req.headers.user;
   const tweet = req.body.tweet;
-  const tweetObj = {username,tweet};
+  const tweetObj = { username, tweet };
   const isRegistered = users.find((user) => user.username === username);
   if (username === "" || tweet === "")
     return res.status(400).send("Todos os campos são obrigatórios!");
@@ -42,7 +42,6 @@ app.post("/tweets", (req, res) => {
 
 app.get("/tweets", (req, res) => {
   const { page } = req.query;
-  const arrayTweets = [...tweets];
   if (page && page !== "") {
     const numPage = Number(page);
     if (!numPage || numPage <= 0)
@@ -50,7 +49,7 @@ app.get("/tweets", (req, res) => {
     if (numPage) {
       const initialTweet = numPage * 10 - 10;
       const finalTweet = initialTweet + 10;
-      const tweetPage = arrayTweets.reverse().slice(initialTweet, finalTweet);
+      const tweetPage = [...tweets].reverse().slice(initialTweet, finalTweet);
       tweetPage.map((l) => {
         l.avatar = users.find((user) => user.username === l.username).avatar;
       });
@@ -59,7 +58,7 @@ app.get("/tweets", (req, res) => {
       return res.send(tweetPage);
     }
   } else {
-    const last10 = arrayTweets.reverse().slice(0, 10);
+    const last10 = [...tweets].reverse().slice(0, 10);
     last10.map((l) => {
       l.avatar = users.find((user) => user.username === l.username).avatar;
     });
@@ -68,9 +67,8 @@ app.get("/tweets", (req, res) => {
 });
 
 app.get("/tweets/:USERNAME", (req, res) => {
-  const userName = req.params.USERNAME;
-  const arrayTweets = [...tweets];
-  const userTweets = arrayTweets.filter((t) => t.username === userName);
+  const paramName = req.params.USERNAME;
+  const userTweets = [...tweets].filter((t) => t.username === paramName);
   userTweets.map((l) => {
     l.avatar = users.find((user) => user.username === l.username).avatar;
   });
